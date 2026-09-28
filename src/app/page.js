@@ -1,69 +1,125 @@
-import Image from "next/image";
+import Link from "next/link";
+import CategoryCard from "./components/CategoryCard";
+import ResourceCard from "./components/ResourceCard";
+import { createClient } from "@/lib/supabase/server";
 
-export default function Home() {
+export const metadata = {
+  title: "Educational Resources, Notes & Study Materials",
+  description:
+    "Explore educational notes, study materials, previous year papers, programming resources, and other learning resources on ExamShelf.",
+};
+
+const categories = [
+  {
+    title: "Computer Science",
+    description: "Notes, PDFs, and resources for computer science students.",
+  },
+  {
+    title: "Engineering",
+    description: "Study materials for engineering subjects and courses.",
+  },
+  {
+    title: "Previous Year Papers",
+    description: "Practice with previous examination papers.",
+  },
+  {
+    title: "Programming",
+    description: "Resources for coding and software development.",
+  },
+];
+
+
+
+export default async function Home() {
+  const supabase = await createClient();
+
+  const { data: resources, error } = await supabase
+    .from("resources")
+    .select("*")
+    .eq("status", "published");
+  if (error) {
+    console.error("Error message:", error.message);
+    console.error("Error details:", error.details);
+    console.error("Error hint:", error.hint);
+    console.error("Error code:", error.code);
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.js
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <>
+      {/* Hero Section */}
+      <section className="mx-auto max-w-7xl px-6 py-20">
+        <div className="max-w-2xl">
+          <p className="mb-4 text-sm font-semibold">
+            LEARN. EXPLORE. GROW.
           </p>
+
+          <h1 className="text-4xl font-bold tracking-tight">
+            Your destination for quality educational resources.
+          </h1>
+
+          <p className="mt-6 text-lg text-gray-600">
+            Discover notes, study materials, PDFs, and tutorials designed to
+            support your learning journey.
+          </p>
+
+          <div className="mt-8">
+            <Link
+              href="/explore"
+              className="inline-block rounded-lg bg-black px-6 py-3 text-white"
+            >
+              Explore Resources
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+      </section>
+
+      {/* Categories Section */}
+      <section className="mx-auto max-w-7xl px-6 py-16">
+
+        {/* Heading - OUTSIDE the grid */}
+        <h2 className="text-3xl font-bold">
+          Explore by Category
+        </h2>
+
+        {/* Description - OUTSIDE the grid */}
+        <p className="mt-3 text-gray-600">
+          Find educational resources based on your area of study.
+        </p>
+
+        {/* Only cards should be inside the grid */}
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {categories.map((category) => (
+            <CategoryCard
+              key={category.title}
+              title={category.title}
+              description={category.description}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          ))}
         </div>
-      </main>
-    </div>
+
+      </section>
+
+      {/* Featured Resources Section */}
+      <section className="mx-auto max-w-7xl px-6 py-16">
+        <h2 className="text-3xl font-bold">Featured Resources</h2>
+
+        <p className="mt-3 text-gray-600">
+          Explore popular study materials created for students.
+        </p>
+
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {resources?.map((resource) => (
+            <ResourceCard
+              key={resource.title}
+              title={resource.title}
+              category={resource.category}
+              price={resource.price}
+              slug={resource.slug}
+              coverImageUrl={resource.cover_image_url}
+            />
+          ))}
+        </div>
+      </section>
+    </>
   );
 }
